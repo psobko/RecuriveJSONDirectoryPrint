@@ -1,24 +1,35 @@
 RecuriveJSONDirectoryPrint
 ==========================
 
-A BASH script which recursively lists .MD files from a directory into an associative JSON array which is saved to a flat file.
+A BASH script which recursively searches for markdown files in a directory and outputs the results to a JSON file.
 
-Since JS doesn't have access to the local file system I needed a way to quickly index a directory. This script outputs
+Since JS doesn't have access to the local file system I needed a way to quickly index a directory. The script is functional, but I would consider it a work in progress.
 
+#####Example Output
 ```
-{"Docs:":[
-  {"docs/DirOne": [
-    { "asdasd.md"},
-    { "asdasdas.md"},
-  ]},
-  {"docs/DirTwo": [
-    { "bfbfbfb.md"},
-    { "bgfbfbf.md"},
-    ]}
-]}
+{
+  "propulsion":
+  [
+    "warp-drive.md",
+    "impulse-drive.md"
+  ],
+  "weapons":
+  [
+    "phaser-arrays.md",
+    "torpedo-launchers.md"
+  ],
+  "tranporters":
+  [
+    "personnel.md",
+    "emergency.md",
+    "cargo-bay.md"
+  ]
+  "computer":
+  [
+    "lcars-interface.md",
+    "bio-neural-circuitry.md",
+    "emergency-medical-hologram.md"
+  ]
+}
 ```
 
-This script is fairly coupled to the the problem I was trying to solve, however it should be fairly easy to modify for other purposes. I'll get around to updating it when I have time.
-
-#####Todo
-- 
