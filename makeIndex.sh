@@ -1,28 +1,61 @@
 #!/bin/bash
 
-#scans the "docs" folder and recursively returns all markdown files in an assosciative array which is then converted to JSON and stored in a flat file
+#recursively searches a folder for markdown files and exports the data to a JSON file
+#each subfolder is set as a name, with it's value being an array of the contained files
 
-#declare target output file
-out="./docindex.json"
+#set parameters
+targetDir="docs"
+outputFile="./docindex.json"
 
-#clean up first
-rm $out
-touch $out
+#prepare the output file
+rm $outputFile
+touch $outputFile
 
-#start printing to the file
-printf "{\"Docs:\": [\n" >> $out
-dirs=($(find -E docs -type d -maxdepth 1 -mindepth 1))
+addComma(){
+  endLine=""
+	if [ "$1" -lt "$2" ]
+		then
+		endLine=","
+	fi
+}
+
+echo "{" >> $outputFile
+
+dirs=($(find -E $targetDir -type d -maxdepth 1 -mindepth 1))
+numDirs=${#dirs[@]}
+indxDirs=1
+
 for dir in ${dirs[*]}
 do
-  dirname = $dir 
-  printf "{\"%s\": [\n" $dir >> $out
-  files=($(find -E $dir -type f -regex ".*\.(md$)" | sed 's!.*/!!'))
-  for item in ${files[*]}
-  do
-    printf "{ \"%s\"},\n" $item >> $out
+	#print dir name, trimming the path
+	dirname=${dir:(${#targetDir} +1)}
+	echo "  \"$dirname\":" >> $outputFile
+	echo "  [" >> $outputFile
+
+	files=($(find -E $dir -type f -regex ".*\.(md$)" | sed 's!.*/!!'))
+	numFiles=${#files[@]}
+	indxFiles=1
+
+	for item in ${files[*]}
+	do
+  	#check if comma is needed at the end of the line
+		addComma $indxFiles $numFiles
+  	
+  	#print the file name
+  	echo "    \"$item\"$endLine" >> $outputFile
+
+    indxFiles=$[$indxFiles+1]
   done
-  printf "]},\n" >> $out
+
+	#check if comma is needed at the end of the line
+	addComma $indxDirs $numDirs
+
+	#close the JSON array
+	echo "  ]$endLine" >> $outputFile
+
+  indxDirs=$[$indxDirs+1]
 done
-printf "]}" >> $out
+
+echo "}" >> $outputFile
 
 #psobko
